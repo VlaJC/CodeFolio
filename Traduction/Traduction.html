@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Multi-langues</title>
+    <style>
+        body 
+        { 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            background-color: #f4f4f4; 
+        }
+        .card 
+        { 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 10px; 
+            text-align: center; 
+        }
+        select 
+        { 
+            margin-top: 20px; 
+            padding: 5px; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1 id="site-title">Chargement...</h1>
+        <p id="site-desc">Veuillez patienter.</p>
+        
+        <hr>
+        
+        <label for="lang-select">Changer la langue manuellement :</label>
+        <select id="lang-select">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+        </select>
+    </div>
+
+    <script>
+        const translations = 
+        {
+            "fr": 
+            {
+                "title": "Bienvenue sur mon site !",
+                "desc": "Ce texte a été affiché automatiquement en Français."
+            },
+            "en": 
+            {
+                "title": "Welcome to my website!",
+                "desc": "This text was automatically displayed in English."
+            },
+            "es": 
+            {
+                "title": "¡Bienvenido a mi sitio web!",
+                "desc": "Este texto se mostró automáticamente en Español."
+            },
+            "de": 
+            {
+                "title": "Willkommen auf meiner Webseite!",
+                "desc": "Dieser Text wurde automatisch auf Deutsch angezeigt."
+            }
+        };
+
+        function applyTranslation(lang) 
+        {
+            const data = translations[lang] || translations['en'];
+            
+            document.getElementById('site-title').innerText = data.title;
+            document.getElementById('site-desc').innerText = data.desc;
+            document.getElementById('lang-select').value = lang;
+        }
+
+        window.onload = () => 
+        {
+            const browserLang = navigator.language.substring(0, 2);
+            
+            console.log("Langue détectée : " + browserLang);
+            applyTranslation(browserLang);
+        };
+
+        document.getElementById('lang-select').addEventListener('change', (event) => 
+        {
+            applyTranslation(event.target.value);
+        });
+    </script>
+
+</body>
+</html>
