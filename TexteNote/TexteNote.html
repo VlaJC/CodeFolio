@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TexteNote</title>
+    <style>
+        * 
+        {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body 
+        {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container 
+        {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header 
+        {
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px 30px;
+        }
+
+        .header h1 
+        {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .controls 
+        {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button 
+        {
+            background: #ffffff;
+            color: #333;
+            border: 1px solid #d0d0d0;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        button:hover 
+        {
+            background: #f8f8f8;
+        }
+
+        button:active 
+        {
+            background: #e8e8e8;
+        }
+
+        input[type="file"] 
+        {
+            display: none;
+        }
+
+        .editor-area 
+        {
+            padding: 30px;
+        }
+
+        textarea 
+        {
+            width: 100%;
+            min-height: 500px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            font-size: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        textarea:focus 
+        {
+            outline: none;
+            border-color: #999;
+        }
+
+        .status 
+        {
+            padding: 12px 30px;
+            background: #fafafa;
+            color: #666;
+            font-size: 13px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .status.success 
+        {
+            background: #f0f8f0;
+            color: #2d662d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Éditeur de Texte</h1>
+            <div class="controls">
+                <button onclick="document.getElementById('fileInput').click()">Ouvrir</button>
+                <button onclick="saveText()">Sauvegarder</button>
+                <button onclick="clearText()">Effacer</button>
+            </div>
+        </div>
+        
+        <div class="editor-area">
+            <textarea id="editor" placeholder="Commencez à écrire..."></textarea>
+            <input type="file" id="fileInput" accept=".txt" onchange="loadFile(event)">
+        </div>
+        
+        <div class="status" id="status">
+            Prêt
+        </div>
+    </div>
+
+    <script>
+        const editor = document.getElementById('editor');
+        const status = document.getElementById('status');
+
+        function loadFile(event) 
+        {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) 
+            {
+                editor.value = e.target.result;
+                showStatus('Fichier ouvert', true);
+            };
+            reader.readAsText(file);
+
+            event.target.value = '';
+        }
+
+        function saveText() 
+        {
+            const text = editor.value;
+            if (!text.trim()) 
+            {
+                alert('Rien à sauvegarder');
+                return;
+            }
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `texte.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('Fichier sauvegardé', true);
+        }
+
+        function clearText() 
+        {
+            if (confirm('Effacer tout le texte ?')) 
+            {
+                editor.value = '';
+                showStatus('Texte effacé');
+            }
+        }
+
+        function showStatus(message, success = false) 
+        {
+            status.textContent = message;
+            status.className = 'status' + (success ? ' success' : '');
+            
+            setTimeout(() => 
+            {
+                status.textContent = 'Prêt';
+                status.className = 'status';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
